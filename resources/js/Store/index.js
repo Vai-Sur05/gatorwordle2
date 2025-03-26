@@ -1,6 +1,6 @@
-import { createStore } from 'vuex';
-import { reactive } from 'vue';
-import axios from 'axios';
+import { createStore } from 'vuex'
+import { reactive } from 'vue'
+
 
 
 const evaluateRow = (row, answer) => {
@@ -97,14 +97,17 @@ export default createStore({
         },
         currentWord: (state) => {
             return state.gameGrid[state.rowIndex].join('').toLowerCase(); // ✅ New Getter
+        },
+        currentCellHasChar: (state) => {
+            return state.gameGrid[state.rowIndex][state.charIndex] !== ''
         }
     },
     actions: {
         submitCharacter({ state, commit, getters }, char) {
-            if (getters.allCharsEntered || state.gameGrid[state.rowIndex][state.charIndex] !== '') {
-                return; // Prevents overwriting the same spot
+            if (getters.allCharsEntered || getters.currentCellHasChar) {
+                return // Prevents overwriting the same spot
             }
-            commit('setCharacter', { rowIndex: state.rowIndex, charIndex: state.charIndex, char });
+            commit('setCharacter', { rowIndex: state.rowIndex, charIndex: state.charIndex, char })
             commit('incrementCharIndex');
         },
         undoLastCharacter({ state, commit }) {
@@ -119,7 +122,7 @@ export default createStore({
         },
        submitGuess({ state, commit, getters }) {
             if (!getters.allCharsEntered) {
-                return; // Can't submit if all letters are not filled
+                return // Can't submit if all letters are not filled
             }
         
             const currentWord = getters.currentWord; // Convert input to lowercase
@@ -134,8 +137,8 @@ export default createStore({
             } else if (getters.onLastRow) {
                 commit('lose'); // Last row reached and incorrect guess
             } else {
-                commit('incrementRowIndex');
-                commit('resetCharIndex');
+                commit('incrementRowIndex')
+                commit('resetCharIndex')
             }
         }
         
